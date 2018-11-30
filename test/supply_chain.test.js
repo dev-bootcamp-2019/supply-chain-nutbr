@@ -76,14 +76,18 @@ contract('SupplyChain', function(accounts) {
         const supplyChain = await SupplyChain.deployed()
 
         var eventEmitted = false
-
+/* Unused because it doesn't work on Travis as expected
         var event = supplyChain.Shipped()
         await event.watch((err, res) => {
             sku = res.args.sku.toString(10)
             eventEmitted = true
         })
-
-        await supplyChain.shipItem(sku, {from: alice})
+*/
+        const tx = await supplyChain.shipItem(sku, {from: alice})
+	if (tx.logs[0].event === "Shipped") {
+		sku = tx.logs[0].args.sku.toString(10)
+		eventEmitted = true
+	}
 
         const result = await supplyChain.fetchItem.call(sku)
 
@@ -95,14 +99,18 @@ contract('SupplyChain', function(accounts) {
         const supplyChain = await SupplyChain.deployed()
 
         var eventEmitted = false
-
+/* Unused because it doesn't work on Travis as expected
         var event = supplyChain.Received()
         await event.watch((err, res) => {
             sku = res.args.sku.toString(10)
             eventEmitted = true
         })
-
-        await supplyChain.receiveItem(sku, {from: bob})
+*/
+        const tx = await supplyChain.receiveItem(sku, {from: bob})
+	if (tx.logs[0].event === "Received") {
+		sku = tx.logs[0].args.sku.toString(10)
+		eventEmitted = true
+	}
 
         const result = await supplyChain.fetchItem.call(sku)
 
