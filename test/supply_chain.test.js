@@ -42,19 +42,23 @@ contract('SupplyChain', function(accounts) {
         const supplyChain = await SupplyChain.deployed()
 
         var eventEmitted = false
-
+/* Unused because it doesn't work on Travis as expected
         var event = supplyChain.Sold()
         await event.watch((err, res) => {
             sku = res.args.sku.toString(10)
             eventEmitted = true
         })
-
+*/
         const amount = web3.toWei(2, "ether")
 
         var aliceBalanceBefore = await web3.eth.getBalance(alice).toNumber()
         var bobBalanceBefore = await web3.eth.getBalance(bob).toNumber()
 
-        await supplyChain.buyItem(sku, {from: bob, value: amount})
+        const tx = await supplyChain.buyItem(sku, {from: bob, value: amount})
+	if (tx.logs[0].event === "Sold") {
+		sku = tx.logs[0].args.sku.toString(10)
+		eventEmitted = true
+	}
 
         var aliceBalanceAfter = await web3.eth.getBalance(alice).toNumber()
         var bobBalanceAfter = await web3.eth.getBalance(bob).toNumber()
